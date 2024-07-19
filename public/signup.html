@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <link rel="stylesheet" href="form.css">
+</head>
+<body>
+    <div class="form-container">
+        <h2>Signup</h2>
+        <form id="signupForm" action="/signup" method="POST">
+            <input type="text" id="name" name="name" placeholder="Name" required><br>
+
+            <input type="email" id="email" name="email" placeholder="Email" required><br>
+
+            <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" placeholder="Enter 10-digit phone number" required><br>
+
+            <input type="password" id="password" name="password" placeholder="Password" minlength="6" required><br>
+
+            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" minlength="6" required><br>
+
+            <div class="gender-container">
+                <label class="gender-label">
+                    <input type="checkbox" id="male" name="gender" value="male">
+                    <span class="checkmark"></span>
+                    Male
+                </label>
+                <label class="gender-label">
+                    <input type="checkbox" id="female" name="gender" value="female">
+                    <span class="checkmark"></span>
+                    Female
+                </label>
+            </div>
+
+            <button type="submit">Signup</button>
+            <p>Already have an account? <a href="login.html">Login here</a></p>
+        </form>
+    </div>
+</body>
+</html>

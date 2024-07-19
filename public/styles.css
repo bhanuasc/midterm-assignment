@@ -1,0 +1,81 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+nav ul li {
+    float: left;
+}
+
+nav ul li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+nav ul li a:hover {
+    background-color: #111;
+}
+
+h1 {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.product-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    margin: 10px;
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    width: 30%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+
+.product-card button {
+    margin: 5px;
+    padding: 10px 20px;
+    border: none;
+    background-color: #333;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* Ensure all product images are a fixed size */
+/* Ensure all product images are a fixed size */
+/* .product-card {
+    width: 500px; 
+    height: 500px; 
+    overflow: hidden; 
+    border-radius: 8px; 
+    position: relative; 
+} */
+
+.product-card img {
+    width: 70%; /* Fill the container's width */
+    height: 70%; /* Fill the container's height */
+    object-fit:inherit; /* Cover the container without distortion */
+    border-radius: 8px; /* Optional: border-radius for the image */
+}
+
+
+.product-card button:hover {
+    background-color: #555;
+}

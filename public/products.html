@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/account">Account</a></li>
+            <li><a href="/products">Products</a></li>
+            <li><a href="/add-product">Add Product</a></li>
+            <li><a href="/manage-products">Manage Products</a></li>
+            <li><a href="/login">Logout</a></li>
+        </ul>
+    </nav>
+    <h1>Products</h1>
+    <div id="product-list"></div>
+    <script>
+        async function fetchProducts() {
+            const response = await fetch('/api/products');
+            const products = await response.json();
+            const productList = document.getElementById('product-list');
+
+            productList.innerHTML = products.map(product => `
+                <div class="product-card">
+                    <img src="${product.imageUrl}" alt="${product.name}" >
+                    <h3>${product.name}</h3>
+                    <p>${product.description}</p>
+                    <p>Quantity: ${product.quantity}</p>
+                </div>
+            `).join('');
+        }
+
+        fetchProducts();
+    </script>
+</body>
+</html>

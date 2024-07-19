@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/account">Account</a></li>
+            <li><a href="/products">Products</a></li>
+            <li><a href="/add-product">Add Product</a></li>
+            <li><a href="/manage-products">Manage Products</a></li>
+            <li><a href="/login">Logout</a></li>
+        </ul>
+    </nav>
+    <h1>Account Details</h1>
+    <div id="account-details"></div>
+    <script>
+        async function fetchAccountDetails() {
+            const userId = 'your-user-id'; // Replace with actual user ID
+            const response = await fetch(`/api/account?userId=${userId}`);
+            const account = await response.json();
+            const accountDetails = document.getElementById('account-details');
+
+            accountDetails.innerHTML = `
+                <p>Name: ${account.name}</p>
+                <p>Email: ${account.email}</p>
+                <p>Phone: ${account.phone}</p>
+            `;
+        }
+
+        fetchAccountDetails();
+    </script>
+</body>
+</html>

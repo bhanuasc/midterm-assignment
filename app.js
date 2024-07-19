@@ -1,20 +1,20 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-const { connectToDb, getDb } = require('./db'); // Import getDb here
-const authRoutes = require('./routes/auth'); // Authentication routes
+const { connectToDb, getDb } = require('./db');
+const bcrypt = require('bcryptjs');
 
 const app = express();
 const PORT = 4084;
 
 // Middleware
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true })); // To handle form submissions
-app.use(express.static(path.join(__dirname, 'public'))); // Serve static files from 'public' directory
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Serve static HTML pages
 app.get('/home', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'home.html')); // Serve home page
+    res.sendFile(path.join(__dirname, 'public', 'home.html'));
 });
 
 app.get('/signup', (req, res) => {
@@ -25,12 +25,24 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
+app.get('/products', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'products.html'));
+});
+
+app.get('/add-product', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'add-product.html'));
+});
+
+app.get('/manage-products', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'manage-products.html'));
+});
+
 // Handle form submission from /signup
 app.post('/signup', async (req, res) => {
-    const { name, email, phone, password, confirmPassword, gender } = req.body;
+    const { name, email, phone, password, confirmPassword } = req.body;
 
     // Simple validation
-    if (!name || !email || !password || !confirmPassword || !gender) {
+    if (!name || !email || !password || !confirmPassword) {
         return res.status(400).send('Please enter all fields');
     }
 
@@ -38,7 +50,7 @@ app.post('/signup', async (req, res) => {
         return res.status(400).send('Passwords do not match');
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { // Simple email validation
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         return res.status(400).send('Invalid email format');
     }
 
@@ -48,11 +60,10 @@ app.post('/signup', async (req, res) => {
         // Check if user already exists
         const existingUser = await db.collection('users').findOne({ email });
         if (existingUser) {
-            return res.status(400).send('User already exists');
+            return res.redirect('/login');
         }
 
         // Hash password
-        const bcrypt = require('bcryptjs');
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -62,11 +73,10 @@ app.post('/signup', async (req, res) => {
             email,
             phone,
             password: hashedPassword,
-            gender,
             createdAt: new Date()
         });
 
-        res.status(201).send('User registered successfully');
+        res.redirect('/login?message=Registered successfully');
     } catch (err) {
         console.error('Error registering user:', err);
         res.status(500).send('Server Error');
@@ -92,15 +102,94 @@ app.post('/login', async (req, res) => {
         }
 
         // Validate password
-        const bcrypt = require('bcryptjs');
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).send('Invalid credentials');
         }
 
-        res.send('Login successful');
+        res.redirect('/products');
     } catch (err) {
         console.error('Error logging in:', err);
+        res.status(500).send('Server Error');
+    }
+});
+
+// API to get products
+app.get('/api/products', async (req, res) => {
+    const db = getDb();
+    try {
+        const products = await db.collection('products').find().toArray();
+        res.json(products);
+    } catch (err) {
+        console.error('Error fetching products:', err);
+        res.status(500).send('Server Error');
+    }
+});
+
+// API to add a new product
+app.post('/api/products', async (req, res) => {
+    const { name, description, quantity, imageUrl } = req.body;
+
+    if (!name || !description || !quantity || !imageUrl) {
+        return res.status(400).send('Please enter all fields');
+    }
+
+    const db = getDb();
+
+    try {
+        await db.collection('products').insertOne({
+            name,
+            description,
+            quantity: parseInt(quantity, 10),
+            imageUrl,
+            createdAt: new Date()
+        });
+
+        res.status(201).send('Product added successfully');
+    } catch (err) {
+        console.error('Error adding product:', err);
+        res.status(500).send('Server Error');
+    }
+});
+
+// API to update a product
+app.put('/api/products/:id', async (req, res) => {
+    const { id } = req.params;
+    const { name, description, quantity, imageUrl } = req.body;
+
+    if (!name || !description || !quantity || !imageUrl) {
+        return res.status(400).send('Please enter all fields');
+    }
+
+    const db = getDb();
+    const { ObjectId } = require('mongodb');
+
+    try {
+        await db.collection('products').updateOne(
+            { _id: new ObjectId(id) },
+            { $set: { name, description, quantity: parseInt(quantity, 10), imageUrl } }
+        );
+
+        res.send('Product updated successfully');
+    } catch (err) {
+        console.error('Error updating product:', err);
+        res.status(500).send('Server Error');
+    }
+});
+
+// API to delete a product
+app.delete('/api/products/:id', async (req, res) => {
+    const { id } = req.params;
+
+    const db = getDb();
+    const { ObjectId } = require('mongodb');
+
+    try {
+        await db.collection('products').deleteOne({ _id: new ObjectId(id) });
+
+        res.send('Product deleted successfully');
+    } catch (err) {
+        console.error('Error deleting product:', err);
         res.status(500).send('Server Error');
     }
 });

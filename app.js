@@ -37,6 +37,10 @@ app.get('/manage-products', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'manage-products.html'));
 });
 
+app.get('/account', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'account.html'));
+});
+
 // Handle form submission from /signup
 app.post('/signup', async (req, res) => {
     const { name, email, phone, password, confirmPassword } = req.body;
@@ -165,10 +169,14 @@ app.put('/api/products/:id', async (req, res) => {
     const { ObjectId } = require('mongodb');
 
     try {
-        await db.collection('products').updateOne(
+        const result = await db.collection('products').updateOne(
             { _id: new ObjectId(id) },
             { $set: { name, description, quantity: parseInt(quantity, 10), imageUrl } }
         );
+
+        if (result.modifiedCount === 0) {
+            return res.status(404).send('Product not found');
+        }
 
         res.send('Product updated successfully');
     } catch (err) {
@@ -180,12 +188,20 @@ app.put('/api/products/:id', async (req, res) => {
 // API to delete a product
 app.delete('/api/products/:id', async (req, res) => {
     const { id } = req.params;
-
-    const db = getDb();
     const { ObjectId } = require('mongodb');
 
+    if (!ObjectId.isValid(id)) {
+        return res.status(400).send('Invalid product ID');
+    }
+
+    const db = getDb();
+
     try {
-        await db.collection('products').deleteOne({ _id: new ObjectId(id) });
+        const result = await db.collection('products').deleteOne({ _id: new ObjectId(id) });
+
+        if (result.deletedCount === 0) {
+            return res.status(404).send('Product not found');
+        }
 
         res.send('Product deleted successfully');
     } catch (err) {

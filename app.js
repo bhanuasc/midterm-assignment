@@ -1,16 +1,47 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const { connectToDb, getDb } = require('./db');
 const bcrypt = require('bcryptjs');
+const { ObjectId } = require('mongodb');
 
 const app = express();
 const PORT = 4084;
+
+// MongoDB session store
+const mongoStore = MongoStore.create({
+    mongoUrl: 'mongodb://localhost:27017/your-database', // Replace with your MongoDB URI
+    collectionName: 'sessions'
+});
 
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+require('dotenv').config();
+
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: mongoStore,
+    cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 24 * 60 * 60 * 1000
+    }
+}));
+
+// Middleware to protect routes
+const isAuthenticated = (req, res, next) => {
+    if (req.session && req.session.userId) {
+        next();
+    } else {
+        res.redirect('/login');
+    }
+};
 
 // Serve static HTML pages
 app.get('/home', (req, res) => {
@@ -25,16 +56,21 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
-app.get('/products', (req, res) => {
+// Protect routes
+app.get('/products', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'products.html'));
 });
 
-app.get('/add-product', (req, res) => {
+app.get('/add-product', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'add-product.html'));
 });
 
-app.get('/manage-products', (req, res) => {
+app.get('/manage-products', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'manage-products.html'));
+});
+
+app.get('/account', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'account.html'));
 });
 
 // Handle form submission from /signup
@@ -98,7 +134,7 @@ app.post('/login', async (req, res) => {
         // Check if user exists
         const user = await db.collection('users').findOne({ email });
         if (!user) {
-            return res.status(400).send('User does not exist');
+            return res.redirect('/signup?message=User does not exist, please sign up');
         }
 
         // Validate password
@@ -107,6 +143,8 @@ app.post('/login', async (req, res) => {
             return res.status(400).send('Invalid credentials');
         }
 
+        // Store user ID in session
+        req.session.userId = user._id;
         res.redirect('/products');
     } catch (err) {
         console.error('Error logging in:', err);
@@ -164,13 +202,16 @@ app.put('/api/products/:id', async (req, res) => {
     }
 
     const db = getDb();
-    const { ObjectId } = require('mongodb');
 
     try {
-        await db.collection('products').updateOne(
+        const result = await db.collection('products').updateOne(
             { _id: new ObjectId(id) },
             { $set: { name, description, quantity: parseInt(quantity, 10), imageUrl } }
         );
+
+        if (result.modifiedCount === 0) {
+            return res.status(404).send('Product not found');
+        }
 
         res.send('Product updated successfully');
     } catch (err) {
@@ -183,17 +224,61 @@ app.put('/api/products/:id', async (req, res) => {
 app.delete('/api/products/:id', async (req, res) => {
     const { id } = req.params;
 
+    if (!ObjectId.isValid(id)) {
+        return res.status(400).send('Invalid product ID');
+    }
+
     const db = getDb();
-    const { ObjectId } = require('mongodb');
 
     try {
-        await db.collection('products').deleteOne({ _id: new ObjectId(id) });
+        const result = await db.collection('products').deleteOne({ _id: new ObjectId(id) });
+
+        if (result.deletedCount === 0) {
+            return res.status(404).send('Product not found');
+        }
 
         res.send('Product deleted successfully');
     } catch (err) {
         console.error('Error deleting product:', err);
         res.status(500).send('Server Error');
     }
+});
+
+// API to get account details
+app.get('/api/account', isAuthenticated, async (req, res) => {
+    const userId = req.session.userId;
+
+    if (!userId || !/^[0-9a-fA-F]{24}$/.test(userId)) {
+        return res.status(400).send('Invalid user ID');
+    }
+
+    const db = getDb();
+
+    try {
+        const user = await db.collection('users').findOne({ _id: new ObjectId(userId) });
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
+        res.json({
+            name: user.name,
+            email: user.email,
+            phone: user.phone
+        });
+    } catch (err) {
+        console.error('Error fetching account details:', err);
+        res.status(500).send('Server Error');
+    }
+});
+
+// Logout route
+app.get('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            return res.status(500).send('Failed to logout');
+        }
+        res.redirect('/login');
+    });
 });
 
 // Connect to MongoDB and start server
@@ -204,7 +289,5 @@ connectToDb()
         });
     })
     .catch(err => {
-        console.error('Failed to connect to database:', err);
+        console.error('Failed to connect to MongoDB:', err);
     });
-
-module.exports = app;

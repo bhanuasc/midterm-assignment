@@ -136,7 +136,7 @@ app.post('/login', async (req, res) => {
         // Check if user exists
         const user = await db.collection('users').findOne({ email });
         if (!user) {
-            return res.status(400).send('User does not exist');
+            return res.redirect('/signup?message=User does not exist, please sign up');
         }
 
         // Validate password

@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Product</title>
-    <link rel="stylesheet" href="add.css"> <!-- Use the same stylesheet -->
+    <link rel="stylesheet" href="add.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
 <body>
     <nav class="navbar">  
@@ -17,26 +18,38 @@
             <li><a class="nav-link" href="/login">Logout</a></li>
         </ul>
     </nav>
+
+    <img src="images/addproductsing.png" id="image" alt="">
     <div class="form-container">
         <h2>Add Product</h2>
         <form id="add-product-form">
             <div class="form-group">
-                <label for="name">Product Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label>  
+                <label for="name">Product Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label>  
                 <input type="text" id="name" name="name" required>
             </div>
            
             <div class="form-group">
-                <label for="description">Description &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label>
+                <label for="description">Description &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label>
                 <input type="text" id="description" name="description" required>
+            </div>
+
+            <div class="form-group">
+                <label for="Category">Category&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label>
+                <input type="text" id="Category" name="Category" required>
+            </div>
+
+            <div class="form-group">
+                <label for="Price">Price &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label>
+                <input type="number" id="Price" name="Price" required>
             </div>
            
             <div class="form-group">
-                <label for="quantity">Quantity&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label>
+                <label for="quantity">Quantity&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label>
                 <input type="number" id="quantity" name="quantity" required>
             </div>
            
             <div class="form-group">
-                <label for="imageUrl">Image URL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label>
+                <label for="imageUrl">ImageURL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label>
                 <input type="url" id="imageUrl" name="imageUrl" required>
             </div>
            

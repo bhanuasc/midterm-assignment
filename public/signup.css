@@ -65,6 +65,29 @@ input[type="text"], input[type="email"], input[type="password"] {
     background: #f7f7f7;
 }
 
+.align-wrapper {
+    display: flex; /* Align children horizontally */
+    align-items: center; /* Vertically center items */
+    gap: 10px; /* Space between checker and button */
+    flex-wrap: nowrap; /* Prevent wrapping to next line */
+}
+
+.checker {
+    display: grid;
+    grid-template-columns: 1fr 2fr; /* Divide into 1:2 ratio */
+    align-items: center; /* Vertically center items */
+    flex-shrink: 1; /* Allow it to shrink if needed */
+}
+
+.terms {
+    margin-right: 0; /* Remove space between checkbox and text */
+}
+
+.text {
+    font-size: 10px; /* Adjust font size as needed */
+    margin-left: 5px; /* Space between checkbox and text */
+}
+
 .btn {
     border-radius: 20px;
     border: 1px solid #000000;
@@ -72,9 +95,22 @@ input[type="text"], input[type="email"], input[type="password"] {
     color: #fff;
     font-size: 12px;
     font-weight: bold;
-    padding: 12px 45px;
+    padding: 12px 23px;
     text-transform: uppercase;
     transition: transform 80ms ease-in;
+    cursor: pointer; /* Change cursor to pointer on hover */
+    height: fit-content; /* Ensure button height fits content */
+    flex-shrink: 0; /* Prevent button from shrinking */
+}
+
+/* Optional: Adjust styles for the label and link */
+.text a {
+    color: #007bff; /* Link color */
+    text-decoration: none; /* Remove underline from link */
+}
+
+.text a:hover {
+    text-decoration: underline; /* Underline on hover */
 }
 
 .sign-in-container .btn {
@@ -84,7 +120,8 @@ input[type="text"], input[type="email"], input[type="password"] {
 }
 
 .btn:hover {
-    opacity: 0.8;
+    color: black;
+    background-color: white;
 }
 
 
@@ -96,8 +133,11 @@ input[type="text"], input[type="email"], input[type="password"] {
     margin: 10px 0;
     display: flex;
     width: 100%;
+    gap: 20px;
 
 }
+
+
 
 .gender label {
     font-size: 14px;
@@ -106,4 +146,5 @@ input[type="text"], input[type="email"], input[type="password"] {
     align-items: center;
     justify-content: center;
     margin: 0 10px;
+    gap: 7px;
 }

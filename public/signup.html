@@ -22,7 +22,7 @@
         <div class="form-container sign-up-container">
             <form id="signupForm" action="/signup" method="POST">
                 <h1>Create Account</h1>
-                <span>or use your email for registration</span>
+                
                 <input type="text" id="name" name="name" placeholder="Name" required />
                 <input type="email" id="email" name="email" placeholder="Email" required />
                 <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" placeholder="Enter 10-digit phone number" required />
@@ -38,6 +38,17 @@
                         Female
                     </label>
                 </div>
+                
+                <div class="align-wrapper">
+                <div class="checker">
+                    <input  type="checkbox" class="terms" name="terms" required>
+                    <label class="text" for="box">
+                        I agree to the 
+                        <a href="/terms-and-conditions" target="_blank">Terms and Conditions</a>
+                    </label>
+                </div>
+            </div>
+                
                 <button type="submit" class="btn">Sign Up</button>
             </form>
         </div>

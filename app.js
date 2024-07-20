@@ -207,14 +207,11 @@ app.put('/api/products/:id', async (req, res) => {
             { $set: { name, description, quantity: parseInt(quantity, 10), imageUrl } }
         );
 
-        if (result.matchedCount === 0) {
+        if (result.modifiedCount === 0) {
             return res.status(404).send('Product not found');
         }
 
-        // Fetch the updated product
-        const updatedProduct = await db.collection('products').findOne({ _id: new ObjectId(id) });
-
-        res.json(updatedProduct); // Send updated product back
+        res.send('Product updated successfully');
     } catch (err) {
         console.error('Error updating product:', err);
         res.status(500).send('Server Error');

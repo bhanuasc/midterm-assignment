@@ -166,7 +166,7 @@ app.get('/api/products', async (req, res) => {
 
 // API to add a new product
 app.post('/api/products', async (req, res) => {
-    const { name, description, quantity, imageUrl } = req.body;
+    const { name, description, quantity, imageUrl,Category,price } = req.body;
 
     if (!name || !description || !quantity || !imageUrl) {
         return res.status(400).send('Please enter all fields');
@@ -178,6 +178,8 @@ app.post('/api/products', async (req, res) => {
         await db.collection('products').insertOne({
             name,
             description,
+            Category,
+            price: parseFloat(price),
             quantity: parseInt(quantity, 10),
             imageUrl,
             createdAt: new Date()

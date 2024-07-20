@@ -140,6 +140,8 @@ app.post('/api/products', async (req, res) => {
         await db.collection('products').insertOne({
             name,
             description,
+            Category,
+            price: parseFloat(price),
             quantity: parseInt(quantity, 10),
             imageUrl,
             createdAt: new Date()

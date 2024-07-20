@@ -3,39 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup</title>
-    <link rel="stylesheet" href="form.css">
+    <title>Sign In / Sign Up Form</title>
+    <link rel="stylesheet" href="signup.css">
 </head>
 <body>
-    <div class="form-container">
-        <h2>Signup</h2>
-        <form id="signupForm" action="/signup" method="POST">
-            <input type="text" id="name" name="name" placeholder="Name" required><br>
-
-            <input type="email" id="email" name="email" placeholder="Email" required><br>
-
-            <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" placeholder="Enter 10-digit phone number" required><br>
-
-            <input type="password" id="password" name="password" placeholder="Password" minlength="6" required><br>
-
-            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" minlength="6" required><br>
-
-            <div class="gender-container">
-                <label class="gender-label">
-                    <input type="checkbox" id="male" name="gender" value="male">
-                    <span class="checkmark"></span>
-                    Male
-                </label>
-                <label class="gender-label">
-                    <input type="checkbox" id="female" name="gender" value="female">
-                    <span class="checkmark"></span>
-                    Female
-                </label>
-            </div>
-
-            <button type="submit">Signup</button>
-            <p>Already have an account? <a href="login.html">Login here</a></p>
-        </form>
+    <div class="container">
+        <!-- Sign In Form -->
+        <div class="form-container sign-in-container">
+            <form action="#">
+                <h1>Welcome Back!</h1>
+                <p>To keep connected with us please login with your personal info</p>
+                <!-- <button class="btn">Sign In</button> -->
+                <a id="signinbt" href="login.html">Sign In</a>
+            </form>
+        </div>
+        
+        <!-- Sign Up Form -->
+        <div class="form-container sign-up-container">
+            <form id="signupForm" action="/signup" method="POST">
+                <h1>Create Account</h1>
+                <span>or use your email for registration</span>
+                <input type="text" id="name" name="name" placeholder="Name" required />
+                <input type="email" id="email" name="email" placeholder="Email" required />
+                <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" placeholder="Enter 10-digit phone number" required />
+                <input type="password" id="password" name="password" placeholder="Password" minlength="6" required />
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" minlength="6" required />
+                <div class="gender">
+                    <label>
+                        <input type="radio" id="male" name="gender" value="male" checked>
+                        Male
+                    </label>
+                    <label>
+                        <input type="radio" id="female" name="gender" value="female">
+                        Female
+                    </label>
+                </div>
+                <button type="submit" class="btn">Sign Up</button>
+            </form>
+        </div>
     </div>
 </body>
 </html>

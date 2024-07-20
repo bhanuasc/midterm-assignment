@@ -1,0 +1,113 @@
+/* General Styles */
+body {
+    background: #f6f5f7;
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+ 
+/* Navbar Styles */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    padding: 10px 20px;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+ 
+.logo {
+    font-size: 1.5em;
+    color: #fff;
+    text-transform: uppercase;
+}
+ 
+.navbar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+ 
+.navbar-nav li {
+    display: inline;
+    margin-right: 15px;
+}
+ 
+.navbar-nav a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1em;
+}
+ 
+.navbar-nav a:hover {
+    color: #ff6347;
+}
+ 
+/* Form Container */
+.form-container {
+    max-width: 400px;
+    margin: 100px auto; /* Center vertically with margin top */
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+ 
+/* Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Space between form elements */
+}
+ 
+.form-group {
+    display: flex;
+    align-items: center;
+}
+ 
+form label {
+    display: inline-block;
+    width: 150px; /* Set a fixed width for labels */
+    color: #333;
+    margin-right: 6px; /* Space between label and input */
+    text-align: left;
+}
+ 
+form input[type="text"],
+form input[type="email"],
+form input[type="tel"],
+form input[type="password"],
+form input[type="url"],
+form input[type="number"] {
+    width: calc(100% - 170px); /* Adjusted width to fit beside the label */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+ 
+form button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    background-color: #333; /* Match the signup button color */
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+ 
+form button:hover {
+    background-color: #FF416C; /* Match the signup button hover color */
+}
+ 

@@ -38,13 +38,17 @@
                     <div class="product-card" id="product-${product._id}">
                         <img src="${product.imageUrl}" alt="${product.name}">
                         <h3>${product.name}</h3>
-                        <p>${product.description}</p>
+                        <p>Description: ${product.description}</p>
+                        <p>Category: ${product.Category}</p>
+                        <p>Price: $${product.price}</p>
                         <p>Quantity: <span id="quantity-${product._id}">${product.quantity}</span></p>
                         <button class="btn" onclick="toggleEditForm('${product._id}')">Edit</button>
                         <button class="btn" onclick="deleteProduct('${product._id}')">Delete</button>
-                        <form class="edit-form" id="edit-form-${product._id}" onsubmit="return updateProduct(event, '${product._id}')">
+                        <form class="edit-form" id="edit-form-${product._id}" style="display: none;" onsubmit="return updateProduct(event, '${product._id}')">
                             <input type="text" name="name" value="${product.name}" required>
                             <textarea name="description" required>${product.description}</textarea>
+                            <input type="text" name="Category" value="${product.Category}" required>
+                            <input type="number" name="price" value="${product.price}" step="0.01" required>
                             <input type="number" name="quantity" value="${product.quantity}" required>
                             <input type="url" name="imageUrl" value="${product.imageUrl}" required>
                             <button class="btn" type="submit">Save</button>
@@ -68,6 +72,8 @@
             const form = event.target;
             const formData = new FormData(form);
             const updatedProduct = Object.fromEntries(formData.entries());
+            updatedProduct.price = parseFloat(updatedProduct.price); // Convert price to float
+            updatedProduct.quantity = parseInt(updatedProduct.quantity, 10); // Convert quantity to int
  
             try {
                 const response = await fetch(`/api/products/${productId}`, {
@@ -82,7 +88,9 @@
  
                 const updatedProductData = await response.json();
                 document.querySelector(`#product-${productId} h3`).textContent = updatedProductData.name;
-                document.querySelector(`#product-${productId} p`).textContent = updatedProductData.description;
+                document.querySelector(`#product-${productId} p:nth-of-type(1)`).textContent = `Description: ${updatedProductData.description}`;
+                document.querySelector(`#product-${productId} p:nth-of-type(2)`).textContent = `Category: ${updatedProductData.Category}`;
+                document.querySelector(`#product-${productId} p:nth-of-type(3)`).textContent = `Price: $${updatedProductData.price}`;
                 document.querySelector(`#quantity-${productId}`).textContent = updatedProductData.quantity;
                 form.style.display = 'none';
             } catch (error) {

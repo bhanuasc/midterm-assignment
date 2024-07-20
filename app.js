@@ -21,7 +21,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-
 require('dotenv').config();
 
 app.use(session({
@@ -34,7 +33,6 @@ app.use(session({
         maxAge: 24 * 60 * 60 * 1000
     }
 }));
-
 
 // Middleware to protect routes
 const isAuthenticated = (req, res, next) => {
@@ -227,10 +225,18 @@ app.put('/api/products/:id', async (req, res) => {
 app.delete('/api/products/:id', async (req, res) => {
     const { id } = req.params;
 
+    if (!ObjectId.isValid(id)) {
+        return res.status(400).send('Invalid product ID');
+    }
+
     const db = getDb();
 
     try {
-        await db.collection('products').deleteOne({ _id: new ObjectId(id) });
+        const result = await db.collection('products').deleteOne({ _id: new ObjectId(id) });
+
+        if (result.deletedCount === 0) {
+            return res.status(404).send('Product not found');
+        }
 
         res.send('Product deleted successfully');
     } catch (err) {
@@ -284,7 +290,5 @@ connectToDb()
         });
     })
     .catch(err => {
-        console.error('Failed to connect to database:', err);
+        console.error('Failed to connect to MongoDB:', err);
     });
-
-module.exports = app;

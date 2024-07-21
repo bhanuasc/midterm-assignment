@@ -10,9 +10,11 @@ const { ObjectId } = require('mongodb');
 const app = express();
 const PORT = 4084;
 
+require('dotenv').config();
+
 // MongoDB session store
 const mongoStore = MongoStore.create({
-    mongoUrl: 'mongodb://localhost:27017/your-database', // Replace with your MongoDB URI
+    mongoUrl: process.env.MONGO_URI, // Use environment variable for MongoDB URI
     collectionName: 'sessions'
 });
 
@@ -20,9 +22,6 @@ const mongoStore = MongoStore.create({
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-
-
-require('dotenv').config();
 
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -34,7 +33,6 @@ app.use(session({
         maxAge: 24 * 60 * 60 * 1000
     }
 }));
-
 
 // Middleware to protect routes
 const isAuthenticated = (req, res, next) => {
@@ -153,50 +151,61 @@ app.post('/login', async (req, res) => {
         res.status(500).send('Server Error');
     }
 });
+
+// Endpoint to fetch all products
+app.get('/api/products', isAuthenticated, async (req, res) => {
+    const db = getDb();
+
+    try {
+        const products = await db.collection('products').find().toArray();
+        res.json(products);
+    } catch (err) {
+        console.error('Error fetching products:', err);
+        res.status(500).send('Server Error');
+    }
+});
+
 app.post('/api/products', async (req, res) => {
     const { name, description, quantity, imageUrl, category, price } = req.body;
-  
+
     // Validate input fields (consider using a validation library like joi)
     if (!name || !description || !quantity || !imageUrl || !category || !price) {
-      return res.status(400).send('Please enter all required fields');
+        return res.status(400).send('Please enter all required fields');
     }
-  
+
     // Connect to database
-    const db = await connectToDb();
+    const db = getDb();
     const collection = db.collection('products'); // Use collection name from environment variable
-  
+
     try {
-      // Parse quantity and price as numbers
-      const parsedQuantity = parseInt(quantity, 10);
-      if (isNaN(parsedQuantity)) {
-        return res.status(400).send('Invalid quantity format');
-      }
-  
-      const parsedPrice = parseFloat(price);
-      if (isNaN(parsedPrice)) {
-        return res.status(400).send('Invalid price format');
-      }
-  
-      const newProduct = {
-        name,
-        description,
-        quantity: parsedQuantity,
-        imageUrl,
-        category,
-        price: parsedPrice,
-      };
-  
-      // Insert the new product into the database
-      const result = await collection.insertOne(newProduct);
-      res.status(201).send('Product added successfully'); // Specific success message
+        // Parse quantity and price as numbers
+        const parsedQuantity = parseInt(quantity, 10);
+        if (isNaN(parsedQuantity)) {
+            return res.status(400).send('Invalid quantity format');
+        }
+
+        const parsedPrice = parseFloat(price);
+        if (isNaN(parsedPrice)) {
+            return res.status(400).send('Invalid price format');
+        }
+
+        const newProduct = {
+            name,
+            description,
+            quantity: parsedQuantity,
+            imageUrl,
+            category,
+            price: parsedPrice,
+        };
+
+        // Insert the new product into the database
+        const result = await collection.insertOne(newProduct);
+        res.status(201).send('Product added successfully'); // Specific success message
     } catch (err) {
-      console.error('Error adding product:', err.message);
-      res.status(500).send('Server Error'); // More specific error message for client
-    } finally {
-      // Close database connection (optional for performance optimization in production)
-      // await client.close();  // Consider closing connection for production environments
+        console.error('Error adding product:', err.message);
+        res.status(500).send('Server Error'); // More specific error message for client
     }
-  });
+});
 
 // Endpoint to update an existing product
 app.put('/api/products/:id', async (req, res) => {
@@ -256,11 +265,6 @@ app.delete('/api/products/:id', async (req, res) => {
     }
 });
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-});
-
 // API to get account details
 app.get('/api/account', isAuthenticated, async (req, res) => {
     const userId = req.session.userId;
@@ -277,11 +281,7 @@ app.get('/api/account', isAuthenticated, async (req, res) => {
             return res.status(404).send('User not found');
         }
 
-        res.json({
-            name: user.name,
-            email: user.email,
-            phone: user.phone
-        });
+        res.json(user);
     } catch (err) {
         console.error('Error fetching account details:', err);
         res.status(500).send('Server Error');

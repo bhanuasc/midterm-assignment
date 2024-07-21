@@ -126,19 +126,18 @@ form button:hover {
 /* Product Card Styles */
 .product-card {
     background: #fff;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    margin: 10px;
+    padding: 25px;
+    margin: px;
     box-shadow: 0 0 25px rgba(0, 0, 0, 10);
     text-align: center;
     border-radius: 5px;
-    width: calc(25% - 20px); /* Four cards per row with some margin */
+    width: 250px; /* Four cards per row with some margin */
     box-sizing: border-box;
 }
  
 .product-card img {
     width: 200px;
-    height: 120px; /* Adjust as needed */
+    height: 200px; /* Adjust as needed */
     object-fit: cover; /* Ensures the image covers the container without distortion */
     border-radius: 5px;
     padding: 0%;
@@ -156,36 +155,56 @@ form button:hover {
     font-size: 0.9em;
 }
  
-/* Edit Form Styles */
+/* Styles for the edit form */
 .edit-form {
-    display: none;
-    background: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background-color: #f9f9f9;
     padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
 }
- 
-.edit-form input,
-.edit-form textarea {
+
+.edit-form input[type="text"],
+.edit-form textarea,
+.edit-form input[type="number"],
+.edit-form input[type="url"] {
     width: 100%;
     padding: 10px;
-    margin-bottom: 10px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box; /* Ensures padding and border are included in the element's total width and height */
 }
- 
-.edit-form button {
+
+.edit-form textarea {
+    resize: vertical;
+    height: 80px; /* Adjust this value as needed */
+}
+
+.edit-form .btn {
     width: auto;
     padding: 10px 20px;
-    background: #000000;
-    color: #fff;
+    background-color: #007bff;
+    color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
- 
-.edit-form button:hover {
-    background: #ff6347;
+
+.edit-form .btn:hover {
+    background-color: #0056b3;
+}
+
+.edit-form .btn[type="button"] {
+    background-color: #6c757d;
+}
+
+.edit-form .btn[type="button"]:hover {
+    background-color: #5a6268;
 }
  
 /* Button Styles */
@@ -202,3 +221,4 @@ form button:hover {
 .btn:hover {
     background: #ff6347;
 }
+

@@ -21,6 +21,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+
 require('dotenv').config();
 
 app.use(session({
@@ -33,6 +34,7 @@ app.use(session({
         maxAge: 24 * 60 * 60 * 1000
     }
 }));
+
 
 // Middleware to protect routes
 const isAuthenticated = (req, res, next) => {
@@ -151,8 +153,7 @@ app.post('/login', async (req, res) => {
         res.status(500).send('Server Error');
     }
 });
-
-// API to get products
+// Endpoint to get all products
 app.get('/api/products', async (req, res) => {
     const db = getDb();
     try {
@@ -164,27 +165,26 @@ app.get('/api/products', async (req, res) => {
     }
 });
 
-// API to add a new product
+// Endpoint to add a new product
 app.post('/api/products', async (req, res) => {
-    const { name, description, quantity, imageUrl,Category,price } = req.body;
+    const { name, description, quantity, imageUrl, category, price } = req.body;
 
-    if (!name || !description || !quantity || !imageUrl) {
+    if (!name || !description || !quantity || !imageUrl || !category || !price) {
         return res.status(400).send('Please enter all fields');
     }
 
     const db = getDb();
 
     try {
-        await db.collection('products').insertOne({
+        const newProduct = {
             name,
             description,
-            Category,
-            price: parseFloat(price),
             quantity: parseInt(quantity, 10),
             imageUrl,
-            createdAt: new Date()
-        });
-
+            category,
+            price: parseFloat(price)
+        };
+        await db.collection('products').insertOne(newProduct);
         res.status(201).send('Product added successfully');
     } catch (err) {
         console.error('Error adding product:', err);
@@ -192,12 +192,12 @@ app.post('/api/products', async (req, res) => {
     }
 });
 
-// API to update a product
+// Endpoint to update an existing product
 app.put('/api/products/:id', async (req, res) => {
     const { id } = req.params;
-    const { name, description, quantity, imageUrl } = req.body;
+    const { name, description, quantity, imageUrl, category, price } = req.body;
 
-    if (!name || !description || !quantity || !imageUrl) {
+    if (!name || !description || !quantity || !imageUrl || !category || !price) {
         return res.status(400).send('Please enter all fields');
     }
 
@@ -206,27 +206,33 @@ app.put('/api/products/:id', async (req, res) => {
     try {
         const result = await db.collection('products').updateOne(
             { _id: new ObjectId(id) },
-            { $set: { name, description, quantity: parseInt(quantity, 10), imageUrl } }
+            {
+                $set: {
+                    name,
+                    description,
+                    quantity: parseInt(quantity, 10),
+                    imageUrl,
+                    category,
+                    price: parseFloat(price)
+                }
+            }
         );
 
-        if (result.modifiedCount === 0) {
+        if (result.matchedCount === 0) {
             return res.status(404).send('Product not found');
         }
 
-        res.send('Product updated successfully');
+        const updatedProduct = await db.collection('products').findOne({ _id: new ObjectId(id) });
+        res.json(updatedProduct);
     } catch (err) {
         console.error('Error updating product:', err);
         res.status(500).send('Server Error');
     }
 });
 
-// API to delete a product
+// Endpoint to delete a product
 app.delete('/api/products/:id', async (req, res) => {
     const { id } = req.params;
-
-    if (!ObjectId.isValid(id)) {
-        return res.status(400).send('Invalid product ID');
-    }
 
     const db = getDb();
 
@@ -242,6 +248,11 @@ app.delete('/api/products/:id', async (req, res) => {
         console.error('Error deleting product:', err);
         res.status(500).send('Server Error');
     }
+});
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
 });
 
 // API to get account details
@@ -289,5 +300,7 @@ connectToDb()
         });
     })
     .catch(err => {
-        console.error('Failed to connect to MongoDB:', err);
+        console.error('Failed to connect to database:', err);
     });
+
+module.exports = app;

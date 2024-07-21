@@ -153,44 +153,50 @@ app.post('/login', async (req, res) => {
         res.status(500).send('Server Error');
     }
 });
-// Endpoint to get all products
-app.get('/api/products', async (req, res) => {
-    const db = getDb();
-    try {
-        const products = await db.collection('products').find().toArray();
-        res.json(products);
-    } catch (err) {
-        console.error('Error fetching products:', err);
-        res.status(500).send('Server Error');
-    }
-});
-
-// Endpoint to add a new product
 app.post('/api/products', async (req, res) => {
     const { name, description, quantity, imageUrl, category, price } = req.body;
-
+  
+    // Validate input fields (consider using a validation library like joi)
     if (!name || !description || !quantity || !imageUrl || !category || !price) {
-        return res.status(400).send('Please enter all fields');
+      return res.status(400).send('Please enter all required fields');
     }
-
-    const db = getDb();
-
+  
+    // Connect to database
+    const db = await connectToDb();
+    const collection = db.collection('products'); // Use collection name from environment variable
+  
     try {
-        const newProduct = {
-            name,
-            description,
-            quantity: parseInt(quantity, 10),
-            imageUrl,
-            category,
-            price: parseFloat(price)
-        };
-        await db.collection('products').insertOne(newProduct);
-        res.status(201).send('Product added successfully');
+      // Parse quantity and price as numbers
+      const parsedQuantity = parseInt(quantity, 10);
+      if (isNaN(parsedQuantity)) {
+        return res.status(400).send('Invalid quantity format');
+      }
+  
+      const parsedPrice = parseFloat(price);
+      if (isNaN(parsedPrice)) {
+        return res.status(400).send('Invalid price format');
+      }
+  
+      const newProduct = {
+        name,
+        description,
+        quantity: parsedQuantity,
+        imageUrl,
+        category,
+        price: parsedPrice,
+      };
+  
+      // Insert the new product into the database
+      const result = await collection.insertOne(newProduct);
+      res.status(201).send('Product added successfully'); // Specific success message
     } catch (err) {
-        console.error('Error adding product:', err);
-        res.status(500).send('Server Error');
+      console.error('Error adding product:', err.message);
+      res.status(500).send('Server Error'); // More specific error message for client
+    } finally {
+      // Close database connection (optional for performance optimization in production)
+      // await client.close();  // Consider closing connection for production environments
     }
-});
+  });
 
 // Endpoint to update an existing product
 app.put('/api/products/:id', async (req, res) => {

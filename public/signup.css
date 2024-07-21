@@ -3,45 +3,52 @@
 }
 
 body {
-    font-family: 'Arial', sans-serif;
+    background-image: url("./images/home-page-bg.avif.jpg");
+    background-size: cover;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
     display: flex;
-    justify-content: center;
+    justify-content: left;
     align-items: center;
     height: 100vh;
-    margin: 0;
-    background: #f0f0f0;
 }
 
 .container {
+    margin-left: 80px;
     background: #fff;
     border-radius: 10px;
-    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
+    box-shadow: 24px 10px 48px rgba(0, 0, 0, 0.8), 0 10px 10px rgba(0, 0, 0, 0.22);
     display: flex;
     overflow: hidden;
-    width: 768px;
-    max-width: 100%;
-    min-height: 480px;
+    width: 580px;
+    max-width: 720px;
+    max-height: 500px;
 }
 
 .form-container {
     padding: 50px;
-    padding-top: 15px;
-    padding-bottom: 20px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: 50%;
 }
 
 .sign-in-container {
-    background: #000000;
-    color: #fff;
-    flex: 1;
-}
+    background: #bfd4de;
+    color: #000000;
+    flex: 0 0 120px;  /* Adjust the last value for width */
+    width: auto;  /* Optional, allows the container to grow if needed */
+  }
+  
 
 .sign-up-container {
-    background: #fff;
+    background: #fff7f7;
     flex: 1;
+    
 }
 
 h1 {
@@ -84,12 +91,13 @@ input[type="text"], input[type="email"], input[type="password"] {
 }
 
 .btn:hover {
-    opacity: 0.8;
+    background-color: #bfd4de;
+    color: #000000;
 }
 
 
 #signinbt{
-    color: #ddd;
+    color: #000000;
 }
 
 .gender {

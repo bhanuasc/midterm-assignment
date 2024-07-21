@@ -222,3 +222,16 @@ form button:hover {
     background: #ff6347;
 }
 
+.account-details-container {
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    padding: 25px;
+    margin: 0 auto; /* Vertically centers the container */
+    box-shadow: 0 0 25px rgba(0, 0, 0, 10);
+    text-align: left;
+    border-radius: 5px;
+    width: 250px;
+    box-sizing: border-box;
+  }
+  

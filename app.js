@@ -8,7 +8,7 @@ const bcrypt = require('bcryptjs');
 const { ObjectId } = require('mongodb');
 
 const app = express();
-const PORT = 4084;
+const PORT = process.env.PORT || 3000;
 
 require('dotenv').config();
 
